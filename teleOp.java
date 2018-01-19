@@ -24,7 +24,9 @@ public class teleOp extends OpMode
     private CRServo IntakeL;
     private Servo IntLnkR;
     private Servo IntLnkL;
-    private Servo jewel;
+    private Servo jewelArm;
+    private Servo jewelTurn;
+    //private Servo jewel;
     double DriveTrainModifier = 1;
     boolean liftInt = false;
     boolean canLift;
@@ -35,12 +37,16 @@ public class teleOp extends OpMode
     public void init()
     {
         motorInit();
-        jewel = hardwareMap.servo.get("jewelRight");
-        jewel.setPosition(1);
-        IntLnkL.setPosition(0.65);
-        IntLnkR.setPosition(0.35);
+        //jewel = hardwareMap.servo.get("jewelRight");
+        //jewel.setPosition(1);
+        //IntLnkL.setPosition(0.65);
+        //IntLnkR.setPosition(0.35);
+        jewelArm = hardwareMap.servo.get("jewelArm");
+        jewelTurn = hardwareMap.servo.get("jewelTurn");
+        jewelTurn.setPosition(1);
+        jewelArm.setPosition(0.2);
+        IntLnkL.setPosition(0.8);
     }
-
 
     public void loop()
     {
@@ -49,15 +55,16 @@ public class teleOp extends OpMode
         liftIntake();
 
         if(gamepad1.right_bumper)
-            DriveTrainModifier = 0.5;
+            DriveTrainModifier = 0.7;
         else
             DriveTrainModifier = 1;
 
 
         drive((gamepad1.left_stick_x * DriveTrainModifier), (-gamepad1.left_stick_y * DriveTrainModifier), (gamepad1.right_stick_x * DriveTrainModifier));
-        telemetry.addData("x: ",gamepad1.left_stick_x);
-        telemetry.addData("y: ",-gamepad1.left_stick_y);
-        telemetry.addData("r: ",gamepad1.right_stick_x);
+        telemetry.addData("x: ",gamepad1.left_stick_x*DriveTrainModifier);
+        telemetry.addData("y: ",-gamepad1.left_stick_y*DriveTrainModifier);
+        telemetry.addData("r: ",gamepad1.right_stick_x*DriveTrainModifier);
+        telemetry.addData("modifier: ", DriveTrainModifier);
         telemetry.update();
     }
 
@@ -101,14 +108,19 @@ public class teleOp extends OpMode
         LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
         LiftMotor2 = hardwareMap.dcMotor.get("LiftMotor2");
 
-        ClawR = hardwareMap.crservo.get("Clawr");
-        ClawL = hardwareMap.crservo.get("Clawl");
+        ClawR = hardwareMap.crservo.get("ClawR");
+        ClawL = hardwareMap.crservo.get("ClawL");
+
+        IntakeR = hardwareMap.crservo.get("IntakeR");
+        IntakeL = hardwareMap.crservo.get("IntakeL");
 
         IntLnkL = hardwareMap.servo.get("IntLnkL");
         IntLnkR = hardwareMap.servo.get("IntLnkR");
 
-        IntakeR = hardwareMap.crservo.get("IntakeR");
-        IntakeL = hardwareMap.crservo.get("IntakeL");
+        LeftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        LeftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        RightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        RightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     public void runLift()
@@ -133,29 +145,29 @@ public class teleOp extends OpMode
     public void runClaws()
     {
         if(gamepad2.right_bumper)
-            IntakeR.setPower(1);
+            IntakeR.setPower(0.7);
         else if(gamepad2.right_trigger >= 0.3)
-            IntakeR.setPower(-1);
+            IntakeR.setPower(-0.7);
         else
             IntakeR.setPower(0);
 
         if(gamepad2.left_bumper)
-            IntakeL.setPower(1);
+            IntakeL.setPower(0.7);
         else if(gamepad2.left_trigger >= 0.3)
-            IntakeL.setPower(-1);
+            IntakeL.setPower(-0.7);
         else
             IntakeL.setPower(0);
 
 
-        if(gamepad1.x || gamepad2.b)
+        if(gamepad1.b || gamepad2.y)
         {
-            ClawL.setPower(1);
-            ClawR.setPower(1);
+            ClawL.setPower(0.7);
+            ClawR.setPower(0.7);
         }
-        else if(gamepad1.b || gamepad2.y)
+        else if(gamepad1.x || gamepad2.b)
         {
-            ClawL.setPower(-1);
-            ClawR.setPower(-1);
+            ClawL.setPower(-0.7);
+            ClawR.setPower(-0.7);
         }
         else
         {
@@ -180,8 +192,8 @@ public class teleOp extends OpMode
 
         if(liftInt)
         {
-            IntLnkL.setPosition(0.65);
-            IntLnkR.setPosition(0.35);
+            IntLnkL.setPosition(0.8);
+            IntLnkR.setPosition(0.25);
         }
         else
         {
