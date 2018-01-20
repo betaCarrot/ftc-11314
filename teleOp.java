@@ -59,7 +59,6 @@ public class teleOp extends OpMode
         else
             DriveTrainModifier = 1;
 
-
         drive((gamepad1.left_stick_x * DriveTrainModifier), (-gamepad1.left_stick_y * DriveTrainModifier), (gamepad1.right_stick_x * DriveTrainModifier));
         telemetry.addData("x: ",gamepad1.left_stick_x*DriveTrainModifier);
         telemetry.addData("y: ",-gamepad1.left_stick_y*DriveTrainModifier);

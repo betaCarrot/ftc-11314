@@ -88,7 +88,7 @@ public class nearRed extends LinearOpMode {
     static final double OFFSET = 7.5;
     static final double FORWARD_DISTANCE= 6;
     static final double BACKWARD_DISTANCE = 6;
-    static final double PUSH_DISTANCE = 9;
+    static final double PUSH_DISTANCE = 11;
     static final double BACKOFF_DISTANCE = 8;
 
     public void runOpMode() {
@@ -104,43 +104,43 @@ public class nearRed extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        lift(DRIVE_SPEED,5);
+        lift(DRIVE_SPEED,3);
 
         runtime.reset();
-        while(runtime.milliseconds()<1000) {
+        while(opModeIsActive()&&runtime.milliseconds()<1000) {
             jewelArm.setPosition(0.8);
         }
         runtime.reset();
-        while(runtime.milliseconds()<1000) {
+        while(opModeIsActive()&&runtime.milliseconds()<1000) {
             jewelTurn.setPosition(0.45);
         }
         runtime.reset();
-        while(runtime.milliseconds()<1000) {
-            jewelArm.setPosition(0.9);
+        while(opModeIsActive()&&runtime.milliseconds()<1000) {
+            jewelArm.setPosition(0.92);
         }
-        while(runtime.milliseconds()<500){
+        while(opModeIsActive()&&runtime.milliseconds()<500){
             readColorNumberC();
         }
         double currentPosition = 0.39;
         if (colorCNumber != 0) {
             hitJewel();
         }
-        while (!jewelFinished) {
+        while (opModeIsActive()&&!jewelFinished) {
             runtime.reset();
-            while(runtime.milliseconds()<500){
+            while(opModeIsActive()&&runtime.milliseconds()<500){
                 readColorNumberC();
             }
             if (currentPosition<0.35) {
                 runtime.reset();
-                while(runtime.milliseconds()<1000) {
+                while(opModeIsActive()&&runtime.milliseconds()<1000) {
                     jewelTurn.setPosition(0.45);
                 }
                 runtime.reset();
-                while(runtime.milliseconds()<1000) {
+                while(opModeIsActive()&&runtime.milliseconds()<1000) {
                     jewelArm.setPosition(0.8);
                 }
                 runtime.reset();
-                while(runtime.milliseconds()<1000) {
+                while(opModeIsActive()&&runtime.milliseconds()<1000) {
                     jewelTurn.setPosition(1);
                 }
                 jewelArm.setPosition(0.2);
@@ -162,11 +162,11 @@ public class nearRed extends LinearOpMode {
         telemetry.update();
 
         runtime.reset();
-        while(!VuMarkFinished){
+        while(opModeIsActive()&&!VuMarkFinished){
             findVuMark();
             if(runtime.milliseconds()>2000){
                 deactiveVuMark();
-                VuMarkID=1;
+                VuMarkID=2;
                 VuMarkFinished=true;
                 break;
             }
@@ -236,8 +236,6 @@ public class nearRed extends LinearOpMode {
         } else {
             gyroDrive(DRIVE_SPEED, -(CENTER_DISTANCE  - OFFSET));
         }
-        composeTelemetry();
-        telemetry.clearAll();
         telemetry.update();
         gyroTurn(TURN_SPEED,-90.1,1);
         gyroTurn(TURN_SPEED,-90.0,1);
@@ -246,23 +244,43 @@ public class nearRed extends LinearOpMode {
         ClawL.setPower(-0.7);
         ClawR.setPower(-0.7);
         runtime.reset();
-        while (runtime.milliseconds() < 1000) {
+        while (opModeIsActive()&&runtime.milliseconds() < 1000) {
 
         }
         gyroDrive(DRIVE_SPEED,-BACKWARD_DISTANCE);
-        gyroTurn(TURN_SPEED,90.0,4);
+        gyroTurn(TURN_SPEED,88.0,3);
         gyroDrive(DRIVE_SPEED,-PUSH_DISTANCE);
         gyroDrive(DRIVE_SPEED,BACKOFF_DISTANCE);
         ClawL.setPower(0);
         ClawR.setPower(0);
         if (VuMarkID == 1) {
+            gyroStraffe(DRIVE_SPEED, OFFSET);
+            turn(700,-TURN_SPEED);
+        }
+        if(VuMarkID==2){
+            turn(700,TURN_SPEED);
+        }
+        if (VuMarkID == 3) {
             gyroStraffe(DRIVE_SPEED, -OFFSET);
-            turn(500,-TURN_SPEED);
+            turn(700,TURN_SPEED);
+        }
+        /*
+        gyroDrive(DRIVE_SPEED,PUSH_DISTANCE);
+        gyroDrive(DRIVE_SPEED,-BACKOFF_DISTANCE);
+        ClawL.setPower(0);
+        ClawR.setPower(0);
+        if (VuMarkID == 1) {
+            gyroStraffe(DRIVE_SPEED, -OFFSET);
+            turn(700,TURN_SPEED);
+        }
+        if(VuMarkID==2){
+            turn(700,TURN_SPEED);
         }
         if (VuMarkID == 3) {
             gyroStraffe(DRIVE_SPEED, OFFSET);
-            turn(500,TURN_SPEED);
+            turn(700,-TURN_SPEED);
         }
+        */
         telemetry.update();
     }
 
@@ -341,14 +359,14 @@ public class nearRed extends LinearOpMode {
         if(colorCNumber==BLUE) {
             jewelBackward();
             runtime.reset();
-            while(runtime.milliseconds()<2000){
+            while(opModeIsActive()&&runtime.milliseconds()<2000){
 
             }
         }
         else {
             jewelForward();
             runtime.reset();
-            while(runtime.milliseconds()<2000){
+            while(opModeIsActive()&&runtime.milliseconds()<2000){
 
             }
         }
@@ -634,7 +652,7 @@ public class nearRed extends LinearOpMode {
 
     public void straffe(int ms, double power){
         runtime.reset();
-        while(true) {
+        while(opModeIsActive()&&true) {
             drive(power, 0, 0);
             if (runtime.milliseconds() >= ms){
                 drive(0,0,0);
@@ -646,7 +664,7 @@ public class nearRed extends LinearOpMode {
 
     public void driveForward(int ms, double power){
         runtime.reset();
-        while(true) {
+        while(opModeIsActive()&&true) {
             drive(0, power, 0);
             if (runtime.milliseconds() >= ms){
                 drive(0,0,0);
@@ -658,7 +676,7 @@ public class nearRed extends LinearOpMode {
 
     public void driveBackward(int ms, double power){
         runtime.reset();
-        while(true) {
+        while(opModeIsActive()&&true) {
             drive(0, -power, 0);
             if (runtime.milliseconds() >= ms){
                 runtime.reset();
@@ -670,7 +688,7 @@ public class nearRed extends LinearOpMode {
 
     public void turn(int ms, double power){
         runtime.reset();
-        while(true) {
+        while(opModeIsActive()&&true) {
             drive(0, 0, power);
             if (runtime.milliseconds() >= ms){
                 runtime.reset();
